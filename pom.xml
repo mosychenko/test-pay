@@ -9,7 +9,7 @@
 	<packaging>jar</packaging>
 
 	<name>test-pay-sandbox</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Test Pay Sandbox</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -48,6 +48,19 @@
 			<artifactId>springfox-swagger-ui</artifactId>
 			<version>2.7.0</version>
 			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.8.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.16.18</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 

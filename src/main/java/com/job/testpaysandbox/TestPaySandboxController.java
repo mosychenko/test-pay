@@ -1,29 +1,45 @@
 package com.job.testpaysandbox;
 
+import com.job.testpaysandbox.service.OAuthService;
+import com.job.testpaysandbox.service.OAuthUtils;
+import com.job.testpaysandbox.service.TestPay;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Api
 @RestController
-@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 public class TestPaySandboxController {
 
     @Autowired
     private TestPay testPay;
 
+    @Autowired
+    private OAuthService oAuthService;
+
     @ApiOperation("Get an access token \n " +
         "In response, the TestPay authorization server issues an access token. Re-use the access token " +
-        "until it expires. When it expires, you can get a new token.")
+        "until it expiresInSec. When it expiresInSec, you can get a new token.")
     @RequestMapping(value = "/oauth2/token", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<String> getAccessToken() {
+    public ResponseEntity<String> getAccessToken(@RequestHeader(name = "authorization") String authInfo,
+                                                 @RequestParam(name = "grant_type") String grantType,
+                                                 HttpServletRequest request) {
+        if (!OAuthUtils.validateGrant(grantType)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Grant Type Incorrect");
+        }
+        Pair<String, String> clientIdAndPassword = OAuthUtils.parseBase64Credentials(authInfo);
+        StringBuffer requestURL = request.getRequestURL();
+        String hostPath = requestURL.delete(requestURL.indexOf(request.getRequestURI()), requestURL.length()).toString();
+        oAuthService.createToken(clientIdAndPassword.getKey(), clientIdAndPassword.getValue(), hostPath);
         return ResponseEntity.ok().build();
     }
 

@@ -1,5 +1,6 @@
-package com.job.testpaysandbox;
+package com.job.testpaysandbox.service;
 
+import com.job.testpaysandbox.service.TestPay;
 import org.springframework.stereotype.Service;
 
 import java.util.Scanner;

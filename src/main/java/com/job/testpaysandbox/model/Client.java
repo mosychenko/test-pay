@@ -1,13 +1,12 @@
 package com.job.testpaysandbox.model;
 
-public class User {
-    public final String clientId;
+public class Client {
     public final String password;
     public final String email;
     public Token token;
+    public Role role;
 
-    public User(String clientId, String password, String email) {
-        this.clientId = clientId;
+    public Client(String password, String email) {
         this.password = password;
         this.email = email;
     }
