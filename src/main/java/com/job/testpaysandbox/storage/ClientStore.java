@@ -1,6 +1,7 @@
 package com.job.testpaysandbox.storage;
 
 import com.job.testpaysandbox.model.Client;
+import com.job.testpaysandbox.model.Role;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -17,8 +18,8 @@ public class ClientStore {
 
     @PostConstruct
     public void init() {
-        clients.put("111", new Client("password", "test@email.ru"));
-        clients.put("222", new Client("password2", "test2@email.ru"));
+        clients.put("111", new Client("password", "test@email.ru", Role.USER));
+        clients.put("222", new Client("password2", "test2@email.ru", Role.ADMIN));
     }
 
     public Client getClientByClientId(String clientId) {

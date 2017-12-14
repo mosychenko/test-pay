@@ -6,8 +6,9 @@ public class Client {
     public Token token;
     public Role role;
 
-    public Client(String password, String email) {
+    public Client(String password, String email, Role role) {
         this.password = password;
         this.email = email;
+        this.role = role;
     }
 }
