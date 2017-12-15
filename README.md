@@ -2,3 +2,7 @@ https://github.com/IntuitDeveloper/SampleApp-Webhooks-Java/blob/master/src/test/
 https://www.programcreek.com/java-api-examples/index.php?source_dir=Telegram_Bot-master/src/bot/webServer/WebHook.java
 
 https://dzone.com/articles/spring-boot-restful-api-documentation-with-swagger
+
+
+1) Добавить проверку token
+2) обработка webhook
