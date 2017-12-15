@@ -1,4 +1,4 @@
-package com.job.testpaysandbox;
+package com.job.testpaysandbox.controller;
 
 import com.job.testpaysandbox.model.Payment;
 import com.job.testpaysandbox.service.OAuthService;

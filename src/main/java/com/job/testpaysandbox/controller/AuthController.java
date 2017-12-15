@@ -1,4 +1,4 @@
-package com.job.testpaysandbox;
+package com.job.testpaysandbox.controller;
 
 import com.job.testpaysandbox.model.AuthResult;
 import com.job.testpaysandbox.model.Token;

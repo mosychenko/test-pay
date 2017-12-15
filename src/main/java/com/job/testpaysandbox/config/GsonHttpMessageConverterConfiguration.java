@@ -1,4 +1,4 @@
-package com.job.testpaysandbox;
+package com.job.testpaysandbox.config;
 
 import com.google.gson.Gson;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
