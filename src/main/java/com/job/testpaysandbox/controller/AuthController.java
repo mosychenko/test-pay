@@ -1,8 +1,9 @@
-package com.job.testpaysandbox;
+package com.job.testpaysandbox.controller;
 
+import com.job.testpaysandbox.model.AuthResult;
+import com.job.testpaysandbox.model.Token;
 import com.job.testpaysandbox.service.OAuthService;
 import com.job.testpaysandbox.service.OAuthUtils;
-import com.job.testpaysandbox.service.TestPay;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import javafx.util.Pair;
@@ -17,10 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 @Api
 @RestController
 @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-public class TestPaySandboxController {
-
-    @Autowired
-    private TestPay testPay;
+public class AuthController {
 
     @Autowired
     private OAuthService oAuthService;
@@ -31,25 +29,22 @@ public class TestPaySandboxController {
     @RequestMapping(value = "/oauth2/token", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> getAccessToken(@RequestHeader(name = "authorization") String authInfo,
-                                                 @RequestParam(name = "grant_type") String grantType,
-                                                 HttpServletRequest request) {
+                                                @RequestParam(name = "grant_type") String grantType,
+                                                HttpServletRequest request) {
         if (!OAuthUtils.validateGrant(grantType)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Grant Type Incorrect");
         }
         Pair<String, String> clientIdAndPassword = OAuthUtils.parseBase64Credentials(authInfo);
         StringBuffer requestURL = request.getRequestURL();
         String hostPath = requestURL.delete(requestURL.indexOf(request.getRequestURI()), requestURL.length()).toString();
-        oAuthService.createToken(clientIdAndPassword.getKey(), clientIdAndPassword.getValue(), hostPath);
-        return ResponseEntity.ok().build();
-    }
-
-    @ApiOperation("Creates a payment \n" +
-        "A Payment API call is asynchronous, which lets you show payout details at " +
-        "a later time. After payment processing, you will receive webhook event notification with final " +
-        "payment status")
-    @RequestMapping(value = "/payments/payment", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseEntity<String> createPayment() {
-        return ResponseEntity.ok().build();
+        AuthResult result = oAuthService.createToken(clientIdAndPassword.getKey(), clientIdAndPassword.getValue(), hostPath);
+        switch (result.status) {
+            case SUCCESS:
+                return ResponseEntity.ok(result.jsonToken);
+            case USER_NOT_FOUND:
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            default:
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }
