@@ -54,7 +54,7 @@ public class OAuthService {
     }
 
     private Token createNewToken(Client client, String hostUrl) {
-        String tokenValue = OAuthUtils.generateRandomToken();
+        String tokenValue = Utils.generateRandomString(OAuthUtils.TOKEN_LENGTH, false);
         String scope = scopeStore.getScopeForRole(client.role);
         return Token.builder()
                 .scope(hostUrl + scope)

@@ -9,7 +9,7 @@ import java.util.Random;
 
 public class OAuthUtils {
 
-    private static final int TOKEN_LENGTH = 16;
+    public static final int TOKEN_LENGTH = 16;
     private static final String alfabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private static final Random random = new SecureRandom();
 
@@ -24,14 +24,6 @@ public class OAuthUtils {
             throw new IllegalArgumentException();
         }
         return new Pair<>(splittedAuthCredentials[0], splittedAuthCredentials[1]);
-    }
-
-    public static String generateRandomToken() {
-        StringBuilder randomToken = new StringBuilder();
-        for (int i = 0; i < TOKEN_LENGTH; i++) {
-            randomToken.append(alfabet.charAt(random.nextInt(alfabet.length())));
-        }
-        return randomToken.toString();
     }
 
     public static boolean validateGrant(String grantType) {
