@@ -13,6 +13,11 @@ public class OAuthUtils {
     private static final String alfabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private static final Random random = new SecureRandom();
 
+    /**
+     * getting auth data from header value
+     * @param authInfo - header value. Ex.'Basic MTExOnBhc3N3b3Jk'
+     * @return Pair/<String,String/> = '111:password'
+     */
     public static Pair<String, String> parseBase64Credentials(String authInfo) {
         String[] authHeaderParts = authInfo.split(" ");
         if (authHeaderParts.length < 2) {
@@ -26,6 +31,12 @@ public class OAuthUtils {
         return new Pair<>(splittedAuthCredentials[0], splittedAuthCredentials[1]);
     }
 
+    /**
+     * getting token from header value
+     *
+     * @param authToken header value. Ex: 'Bearer rZMtbPKUxrSsdUtR'
+     * @return token. Ex. 'rZMtbPKUxrSsdUtR'
+     */
     public static String getToken(String authToken) {
         String[] authHeaderParts = authToken.split(" ");
         if (authHeaderParts.length < 2) {

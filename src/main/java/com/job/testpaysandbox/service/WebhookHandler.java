@@ -14,7 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Created by max on 12/17/17.
+ * Handler for processing messages and retry logic
  */
 @Service
 public class WebhookHandler {
@@ -67,6 +67,7 @@ public class WebhookHandler {
                 .notificationUrl(paymentPayload.getPayment().getNotificationUrl())
                 .message(message)
                 .build();
+        // one add. place for retry messages
         if (currentCapacity == 2) {
             queue.add(webhookPayload);
             full.set(true);
