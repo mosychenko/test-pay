@@ -3,6 +3,7 @@ package com.job.testpaysandbox.service;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.job.testpaysandbox.model.*;
 import com.job.testpaysandbox.storage.MerchantAccountStore;
+import org.apache.tomcat.util.buf.HexUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -112,7 +113,7 @@ public class PayService {
             try {
                 MessageDigest digest = MessageDigest.getInstance("SHA-256");
                 byte[] hash = digest.digest(account.secret.getBytes(StandardCharsets.UTF_8));
-                String secret = new String(hash).toUpperCase();
+                String secret = HexUtils.toHexString(hash).toUpperCase();
                 webhookHandler.sendEvent(payload, paymentProcessingStatus, secret);
             } catch (Exception e) {
                 logger.log(Level.SEVERE, e.getMessage(), e);

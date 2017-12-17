@@ -26,6 +26,14 @@ public class OAuthUtils {
         return new Pair<>(splittedAuthCredentials[0], splittedAuthCredentials[1]);
     }
 
+    public static String getToken(String authToken) {
+        String[] authHeaderParts = authToken.split(" ");
+        if (authHeaderParts.length < 2) {
+            throw new IllegalArgumentException();
+        }
+        return authHeaderParts[1];
+    }
+
     public static boolean validateGrant(String grantType) {
         return GrantType.CLIENT_CREDENTIALS.equals(GrantType.parse(grantType));
     }

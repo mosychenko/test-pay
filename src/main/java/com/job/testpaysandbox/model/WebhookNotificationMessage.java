@@ -1,6 +1,7 @@
 package com.job.testpaysandbox.model;
 
 import com.google.gson.annotations.SerializedName;
+import org.apache.tomcat.util.buf.HexUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -73,7 +74,7 @@ public class WebhookNotificationMessage {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             String text = currency + amount + shaSecretUpperCase + id + externalId + status;
             byte[] hash = digest.digest(text.getBytes(StandardCharsets.US_ASCII));
-            return new WebhookNotificationMessage(currency, amount, id, externalId, status, new String(hash));
+            return new WebhookNotificationMessage(currency, amount, id, externalId, status, HexUtils.toHexString(hash));
         }
     }
 }

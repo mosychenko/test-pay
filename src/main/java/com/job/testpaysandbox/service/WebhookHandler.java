@@ -76,17 +76,24 @@ public class WebhookHandler {
     }
 
     private void processing() {
+        int handledMassage = 0;
         while (!shutdown.get()) {
             WebhookPayload payload = queue.poll();
             if (payload == null || payload.getTotalTryCount() > MAX_TRY_SEND_COUNT) {
                 return;
             }
             if (payload.getTodayTryCount() > dayTryCount) {
+                handledMassage++;
                 queue.add(payload);
+                // all message was handled and reschedule on next day
+                if (handledMassage == queue.size()) {
+                    return;
+                }
                 continue;
             }
+            handledMassage = 0;
             try {
-                restTemplate.put(payload.getNotificationUrl(), payload.getMessage());
+                restTemplate.postForLocation(payload.getNotificationUrl(), payload.getMessage());
                 full.weakCompareAndSet(true, false);
             } catch (Exception e) {
                 logger.log(Level.INFO, e.getMessage(), e);

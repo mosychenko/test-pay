@@ -38,7 +38,7 @@ public class Token {
     public boolean isExpired() {
         Date currentTime = new Date();
         Date expiredTime = new Date(createDate.getTime() + expiresInSec * 1000);
-        return currentTime.before(expiredTime);
+        return currentTime.after(expiredTime);
     }
 
     public static class Builder {

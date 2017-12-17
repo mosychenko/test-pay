@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by max on 12/14/17.
@@ -51,6 +53,17 @@ public class OAuthService {
             return new AuthResult(AuthStatus.SUCCESS, gson.toJson(newToken));
         }
         return new AuthResult(AuthStatus.USER_NOT_FOUND);
+    }
+
+    public boolean isValidToken(String tokenValue, String url) {
+        Token token = tokenStore.findByTokenValue(tokenValue);
+        if (token == null || token.isExpired()) {
+            return false;
+        }
+        Pattern pattern = Pattern.compile(token.scope);
+
+        Matcher matcher = pattern.matcher(url);
+        return matcher.matches();
     }
 
     private Token createNewToken(Client client, String hostUrl) {

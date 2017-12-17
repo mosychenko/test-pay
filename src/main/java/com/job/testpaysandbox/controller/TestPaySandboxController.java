@@ -4,17 +4,19 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.job.testpaysandbox.model.ErrorType;
 import com.job.testpaysandbox.model.Payment;
+import com.job.testpaysandbox.model.PaymentProcessingStatus;
 import com.job.testpaysandbox.model.PaymentResult;
 import com.job.testpaysandbox.service.OAuthService;
+import com.job.testpaysandbox.service.OAuthUtils;
 import com.job.testpaysandbox.service.PayService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Validation;
 import javax.validation.Validator;
 
@@ -39,13 +41,19 @@ public class TestPaySandboxController {
         "payment status")
     @RequestMapping(value = "/payments/payment", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<String> createPayment(@RequestHeader(name = "authorization") String token,
-                                                @RequestBody Payment payment) {
-        // TODO validate token
+    public ResponseEntity<String> createPayment(@RequestHeader(name = "Authorization") String token,
+                                                @RequestBody Payment payment,
+                                                HttpServletRequest request) {
+        if (!oAuthService.isValidToken(OAuthUtils.getToken(token), request.getRequestURL().toString())) {
+            return createErrorResult(ErrorType.AUTHENTIFICATION_FAILURE);
+        }
         if (!validator.validate(payment).isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return createErrorResult(ErrorType.INVALID_REQUEST);
         }
         PaymentResult result = payService.addPaymentToProcessing(payment);
+        if (PaymentProcessingStatus.FAILED.name().toLowerCase().equals(result.getState())) {
+            return createErrorResult(ErrorType.INTERNAL_SERVER_ERROR);
+        }
         return ResponseEntity.ok(gson.toJson(result));
     }
 
